@@ -2,10 +2,7 @@ package com.lorenzo.LaunchTaskBot.app;
 
 import com.lorenzo.LaunchTaskBot.command.Command;
 import com.lorenzo.LaunchTaskBot.command.CommandParser;
-import com.lorenzo.LaunchTaskBot.data.model.User;
-import com.lorenzo.LaunchTaskBot.data.repository.UserRepository;
 import com.slack.api.bolt.App;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,9 +12,6 @@ import static com.slack.api.model.block.element.BlockElements.*;
 
 @Configuration
 public class SlackApp {
-
-    @Autowired
-    UserRepository userRepository;
 
     @Bean
     public App initSlackApp() {
