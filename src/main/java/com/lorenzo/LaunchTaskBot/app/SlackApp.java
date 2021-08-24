@@ -1,8 +1,11 @@
 package com.lorenzo.LaunchTaskBot.app;
 
+import com.lorenzo.LaunchTaskBot.command.Command;
 import com.lorenzo.LaunchTaskBot.command.CommandParser;
+import com.lorenzo.LaunchTaskBot.data.model.User;
+import com.lorenzo.LaunchTaskBot.data.repository.UserRepository;
 import com.slack.api.bolt.App;
-import com.slack.api.model.block.composition.OptionObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,29 +16,34 @@ import static com.slack.api.model.block.element.BlockElements.*;
 @Configuration
 public class SlackApp {
 
+    @Autowired
+    UserRepository userRepository;
+
     @Bean
     public App initSlackApp() {
-        CommandParser parser = new CommandParser();
         App app = new App();
 
-        OptionObject optionObject = new OptionObject();
-        optionObject.setText(plainText(pt -> pt.text("Ping2")));
+        app.command("/action", (req, ctx) -> {
+            String value = req.getPayload().getText();
 
-        app.command("/hello", (req, ctx) -> ctx.ack(asBlocks(
-            section(section -> section.text(markdownText(":wave: pong"))),
-            actions(actions -> actions
-                .elements(asElements(
-                        button(b -> b.actionId("ping-again").text(plainText(pt -> pt.text("Ping"))).value("ping")),
-                        button(b -> b.actionId("ping-again2").text(plainText(pt -> pt.text("Ping2"))).value("ping2")),
-                        overflowMenu(m -> m.actionId("fsdf").options(asOptions(optionObject)))
-                ))
-            )
-        )));
+            Command command = CommandParser.parse(value.split(" "));
 
-        app.blockAction("ping-again", (req, ctx) -> {
+            return ctx.ack(asBlocks(
+                section(section -> section.text(markdownText(":wave: pong"))),
+                actions(actions -> actions
+                    .elements(asElements(
+                        button(b -> b.actionId("confirm-action").style("primary").text(plainText(pt -> pt.text("Accept"))).value(value)),
+                        button(b -> b.actionId("cancel-action").style("danger").text(plainText(pt -> pt.text("Cancel"))).value(value))
+                    ))
+                )
+            ));
+        });
+
+        app.blockAction("confirm-action", (req, ctx) -> {
             String value = req.getPayload().getActions().get(0).getValue();
+
             if (req.getPayload().getResponseUrl() != null) {
-                ctx.respond("You've sent " + value + " by clicking the button!");
+                ctx.ack();
                 ctx.client().chatPostMessage(r -> r
                     .channel(req.getPayload().getChannel().getName())
                     .text("Yikes")
@@ -43,10 +51,10 @@ public class SlackApp {
             }
             return ctx.ack();
         });
-        app.blockAction("/ping-again2", (req, ctx) -> {
+        app.blockAction("cancel-action", (req, ctx) -> {
             String value = req.getPayload().getActions().get(0).getValue();
             if (req.getPayload().getResponseUrl() != null) {
-                return ctx.ack();
+                ctx.respond("You've sent " + value + " by clicking the button! - ");
             }
             return ctx.ack();
         });

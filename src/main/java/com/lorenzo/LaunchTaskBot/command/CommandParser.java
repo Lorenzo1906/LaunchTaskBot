@@ -3,14 +3,17 @@ package com.lorenzo.LaunchTaskBot.command;
 import org.apache.commons.cli.*;
 
 public class CommandParser {
-    public void doMain(String[] args) {
+    public static Command parse(String[] args) {
         Options options = new Options();
 
-        Option input = new Option("i", "input", true, "input file path");
-        options.addOption(input);
+        Option environment = new Option("e", "env", true, "Environment");
+        options.addOption(environment);
 
-        Option output = new Option("o", "output", true, "output file");
-        options.addOption(output);
+        Option action = new Option("a", "action", true, "Action");
+        options.addOption(action);
+
+        Option service = new Option("s", "service", true, "Service");
+        options.addOption(service);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -19,14 +22,26 @@ public class CommandParser {
         try {
             cmd = parser.parse(options, args);
 
-            String inputFilePath = cmd.getOptionValue("input");
-            String outputFilePath = cmd.getOptionValue("output");
+            Command command = new Command();
 
-            System.out.println(inputFilePath);
-            System.out.println(outputFilePath);
+            String envValue = cmd.getOptionValue("env");
+            command.setEnvironment(envValue);
+            command.setEnvironmentLabel(envValue);
+
+            String actionValue = cmd.getOptionValue("action");
+            command.setAction(actionValue);
+            command.setActionLabel(actionValue);
+
+            String serviceValue = cmd.getOptionValue("service");
+            command.setService(serviceValue);
+            command.setServiceLabel(serviceValue);
+
+            return command;
         } catch (ParseException e) {
             System.out.println(e.getMessage());
             formatter.printHelp("utility-name", options);
         }
+
+        return null;
     }
 }
