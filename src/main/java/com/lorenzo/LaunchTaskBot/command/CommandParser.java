@@ -1,9 +1,12 @@
 package com.lorenzo.LaunchTaskBot.command;
 
 import org.apache.commons.cli.*;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CommandParser {
-    public static Command parse(String[] args) {
+
+    public Command parse(String[] args) {
         Options options = new Options();
 
         Option environment = new Option("e", "env", true, "Environment");
@@ -26,15 +29,12 @@ public class CommandParser {
 
             String envValue = cmd.getOptionValue("env");
             command.setEnvironment(envValue);
-            command.setEnvironmentLabel(envValue);
 
             String actionValue = cmd.getOptionValue("action");
             command.setAction(actionValue);
-            command.setActionLabel(actionValue);
 
             String serviceValue = cmd.getOptionValue("service");
             command.setService(serviceValue);
-            command.setServiceLabel(serviceValue);
 
             return command;
         } catch (ParseException e) {

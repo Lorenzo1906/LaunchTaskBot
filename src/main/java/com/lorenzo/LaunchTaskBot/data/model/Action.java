@@ -16,6 +16,9 @@ public class Action {
     private String service;
 
     @Column
+    private String environment;
+
+    @Column
     private String url;
 
     @ManyToOne
@@ -70,5 +73,13 @@ public class Action {
 
     public void setService(String service) {
         this.service = service;
+    }
+
+    public String getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(String environment) {
+        this.environment = environment;
     }
 }

@@ -2,11 +2,10 @@ package com.lorenzo.LaunchTaskBot.command;
 
 public class Command {
     private String environment;
-    private String environmentLabel;
     private String action;
-    private String actionLabel;
     private String service;
-    private String serviceLabel;
+    private String url;
+    private String project;
 
     public String getEnvironment() {
         return environment;
@@ -16,20 +15,12 @@ public class Command {
         this.environment = environment;
     }
 
-    public String getEnvironmentLabel() {
-        return environmentLabel;
+    public String getAction() {
+        return action;
     }
 
-    public void setEnvironmentLabel(String environmentLabel) {
-        this.environmentLabel = environmentLabel;
-    }
-
-    public String getActionLabel() {
-        return actionLabel;
-    }
-
-    public void setActionLabel(String actionLabel) {
-        this.actionLabel = actionLabel;
+    public void setAction(String action) {
+        this.action = action;
     }
 
     public String getService() {
@@ -40,19 +31,19 @@ public class Command {
         this.service = service;
     }
 
-    public String getServiceLabel() {
-        return serviceLabel;
+    public String getUrl() {
+        return url;
     }
 
-    public void setServiceLabel(String serviceLabel) {
-        this.serviceLabel = serviceLabel;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public String getAction() {
-        return action;
+    public String getProject() {
+        return project;
     }
 
-    public void setAction(String action) {
-        this.action = action;
+    public void setProject(String project) {
+        this.project = project;
     }
 }

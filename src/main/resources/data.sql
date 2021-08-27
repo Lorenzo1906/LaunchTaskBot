@@ -10,3 +10,9 @@ INSERT INTO role (id, name, value, channel_id) VALUES
 
 INSERT INTO role_users (roles_id, users_id) VALUES
   (1, 1);
+
+INSERT INTO project (id, name) VALUES
+  (1, 'general');
+
+INSERT INTO action (id, environment, name, service, url, channel_id, project_id) VALUES
+  (1, 'qa', 'show', 'print', '#', 2, 1);
