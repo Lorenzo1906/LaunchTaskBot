@@ -1,8 +1,11 @@
-logging.level:
-  com.slack.api: DEBUG
-server:
-  port: 3000
 spring:
+  profiles:
+    active: "dev"
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -19,3 +22,42 @@ spring:
     console:
       enabled: true
       path: /h2-ui
+logging:
+  file: logs/application-dev.log
+  level:
+    ROOT: INFO
+    com.lorenzo: DEBUG
+    com.slack.api: DEBUG
+    org.springframework: INFO
+server:
+  port: 3000
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    show-sql: false
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        ddl-auto: update
+  h2:
+    console:
+      enabled: true
+      path: /h2-ui
+logging:
+  file: logs/application-prod.log
+  level:
+    ROOT: INFO
+    com.lorenzo: INFO
+    com.slack.api: INFO
+    org.springframework: INFO
+server:
+  port: 3000

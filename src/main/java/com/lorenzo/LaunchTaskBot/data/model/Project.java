@@ -12,6 +12,9 @@ public class Project {
     @Column
     private String name;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private Channel channel;
+
     public long getId() {
         return id;
     }

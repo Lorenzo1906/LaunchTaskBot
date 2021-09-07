@@ -1,12 +1,18 @@
 package com.lorenzo.LaunchTaskBot.command;
 
 import org.apache.commons.cli.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CommandParser {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandParser.class);
+
     public Command parse(String[] args) {
+        LOGGER.debug("Parsing command text {}", (Object[]) args);
+
         Options options = new Options();
 
         Option environment = new Option("e", "env", true, "Environment");
@@ -38,7 +44,7 @@ public class CommandParser {
 
             return command;
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error("Exception while parsing command", e);
             formatter.printHelp("utility-name", options);
         }
 

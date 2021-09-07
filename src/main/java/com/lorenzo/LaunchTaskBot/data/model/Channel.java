@@ -14,6 +14,9 @@ public class Channel {
     @Column
     private String name;
 
+    @OneToOne(mappedBy = "channel")
+    private Project project;
+
     @OneToMany(mappedBy = "channel")
     private List<Role> roles;
 
