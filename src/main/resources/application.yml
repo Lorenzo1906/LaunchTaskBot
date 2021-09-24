@@ -30,7 +30,7 @@ logging:
     com.slack.api: DEBUG
     org.springframework: INFO
 server:
-  port: 3000
+  port: 3001
 ---
 spring:
   config:
@@ -60,4 +60,4 @@ logging:
     com.slack.api: INFO
     org.springframework: INFO
 server:
-  port: 3000
+  port: 3001
