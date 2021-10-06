@@ -13,7 +13,7 @@ public class User {
     @Column
     private String username;
 
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     private
     Set<Role> roles;
 

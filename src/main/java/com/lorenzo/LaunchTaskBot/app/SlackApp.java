@@ -40,7 +40,7 @@ public class SlackApp {
         app.command("/action", (req, ctx) -> {
             LOGGER.info("Received command in the channel {}", req.getPayload().getChannelName());
 
-            if (permissions.userHavePermissions(req.getPayload().getUserName(), req.getPayload().getChannelName())) {
+            if (permissions.userHavePermissionsToChannel(req.getPayload().getUserName(), req.getPayload().getChannelName())) {
                 LOGGER.debug("Permissions validated for user {}", req.getPayload().getUserName());
 
                 Project project = commandActions.getProjectByChannelName(req.getPayload().getChannelName());
@@ -99,44 +99,53 @@ public class SlackApp {
             Command command = commandParser.parse(value.split(" "));
             command = commandActions.getCommandInfo(command, req.getPayload().getChannel().getName());
 
-            if (req.getPayload().getResponseUrl() != null) {
-                LOGGER.debug("Generating channel notification {}", req.getPayload().getChannel().getName());
+            if (permissions.userHavePermissionsToAction(command, req.getPayload().getUser().getUsername())) {
+                if (req.getPayload().getResponseUrl() != null) {
+                    LOGGER.debug("Generating channel notification {}", req.getPayload().getChannel().getName());
 
-                Command finalCommand = command;
+                    Command finalCommand = command;
+
+                    ctx.respond(r -> r
+                            .replaceOriginal(true)
+                            .text(":white_check_mark: Action confirmed")
+                    );
+                    ctx.client().chatPostMessage(r -> r
+                            .channel(req.getPayload().getChannel().getName())
+                            .blocks(asBlocks(
+                                    section(section -> section.text(markdownText(":clock1: *Executing action*"))),
+                                    section(section -> section.text(markdownText("Project: " + finalCommand.getProject()))),
+                                    section(section -> section.text(markdownText("Service: " + finalCommand.getService()))),
+                                    section(section -> section.text(markdownText("Environment: " + finalCommand.getEnvironment()))),
+                                    section(section -> section.text(markdownText("Action: " + finalCommand.getAction())))
+                            ))
+                    );
+
+                    LOGGER.debug("Start action execution");
+                    boolean result = commandActions.executeCommand(command);
+
+                    if (result) {
+                        LOGGER.debug("Action executed correctly, generating answer");
+
+                        ctx.client().chatPostMessage(r -> r
+                                .channel(req.getPayload().getChannel().getName())
+                                .text(":white_check_mark: Execution successful")
+                        );
+                    } else {
+                        LOGGER.debug("Error while executing action, generating answer");
+
+                        ctx.client().chatPostMessage(r -> r
+                                .channel(req.getPayload().getChannel().getName())
+                                .text(":x: Error executing action")
+                        );
+                    }
+                }
+            } else {
+                LOGGER.debug("User with invalid permissions {}", req.getPayload().getUser().getUsername());
 
                 ctx.respond(r -> r
-                    .replaceOriginal(true)
-                    .text(":white_check_mark: Action confirmed")
+                        .replaceOriginal(true)
+                        .text("*You do not have permissions to do this action*")
                 );
-                ctx.client().chatPostMessage(r -> r
-                    .channel(req.getPayload().getChannel().getName())
-                    .blocks(asBlocks(
-                        section(section -> section.text(markdownText(":clock1: *Executing action*"))),
-                        section(section -> section.text(markdownText("Project: " + finalCommand.getProject()))),
-                        section(section -> section.text(markdownText("Service: " + finalCommand.getService()))),
-                        section(section -> section.text(markdownText("Environment: " + finalCommand.getEnvironment()))),
-                        section(section -> section.text(markdownText("Action: " + finalCommand.getAction())))
-                    ))
-                );
-
-                LOGGER.debug("Start action execution");
-                boolean result = commandActions.executeCommand(command);
-
-                if (result) {
-                    LOGGER.debug("Action executed correctly, generating answer");
-
-                    ctx.client().chatPostMessage(r -> r
-                        .channel(req.getPayload().getChannel().getName())
-                        .text(":white_check_mark: Execution successful")
-                    );
-                } else {
-                    LOGGER.debug("Error while executing action, generating answer");
-
-                    ctx.client().chatPostMessage(r -> r
-                        .channel(req.getPayload().getChannel().getName())
-                        .text(":x: Error executing action")
-                    );
-                }
             }
 
             return ctx.ack();

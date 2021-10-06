@@ -1,18 +1,18 @@
 INSERT INTO user (id, username) VALUES
   (1, 'lorenzo1906');
 
-INSERT INTO channel (id, name) VALUES
-  (1, 'all'),
-  (2, 'general');
-
-INSERT INTO role (id, name, value, channel_id) VALUES
-  (1, 'admin', 'value', 1);
+INSERT INTO role (id, name, value) VALUES
+  (1, 'admin', 'value');
 
 INSERT INTO role_users (roles_id, users_id) VALUES
   (1, 1);
 
-INSERT INTO project (id, name, channel_id) VALUES
-  (1, 'general', 2);
+INSERT INTO project (id, name, slack_channel) VALUES
+  (1, 'general', 'general');
 
-INSERT INTO action (id, environment, name, service, url, channel_id, project_id) VALUES
-  (1, 'qa', 'show', 'print', '#', 2, 1);
+INSERT INTO action (id, environment, name, service, url, project_id) VALUES
+  (1, 'qa', 'show', 'print', 'https://gorest.co.in/public/v1/users', 1);
+
+INSERT INTO role_project_action (id, role_id, project_id, action_id) VALUES
+  (1, 1, 1, 1);
+

@@ -24,9 +24,6 @@ public class Action {
     @ManyToOne
     private Project project;
 
-    @ManyToOne
-    private Channel channel;
-
     public long getId() {
         return id;
     }
@@ -57,14 +54,6 @@ public class Action {
 
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
     }
 
     public String getService() {

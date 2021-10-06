@@ -9,6 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,11 +31,46 @@ public class CommandActions {
     private ProjectRepository projectRepository;
 
     public boolean executeCommand(Command command) {
-        try {
-            TimeUnit.SECONDS.sleep(10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        List<Action> actions = actionRepository.findActionByParams(command.getAction(), command.getService(), command.getEnvironment(), command.getProject());
+
+        if (actions.size() > 1) {
+            LOGGER.error("More than one action returned for current configuration");
+
+            return false;
+        } else if (actions.size() < 1) {
+            LOGGER.error("No action returned for current configuration");
+
+            return false;
+        } else {
+            LOGGER.debug("Action found, executing action.");
         }
+
+        try {
+            Action action = actions.get(0);
+
+            URL url = new URL(action.getUrl());
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+
+            if (conn.getResponseCode() != 200) {
+                LOGGER.error("Failed : HTTP error code : {}", conn.getResponseCode());
+            } else {
+                BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+
+                String output;
+                LOGGER.debug("Output from Server ....");
+                while ((output = br.readLine()) != null) {
+
+                    System.out.println(output);
+                }
+
+                conn.disconnect();
+            }
+        } catch (IOException e) {
+            LOGGER.error(e.getLocalizedMessage(), e);
+        }
+
         return true;
     }
 
@@ -67,7 +108,7 @@ public class CommandActions {
     }
 
     public Project getProjectByChannelName(String channelName) {
-        return projectRepository.findByChannel_NameLikeIgnoreCase(channelName);
+        return projectRepository.findBySlackChannelIgnoreCase(channelName);
     }
 
     public Command getCommandInfo(Command command, String channelName) {

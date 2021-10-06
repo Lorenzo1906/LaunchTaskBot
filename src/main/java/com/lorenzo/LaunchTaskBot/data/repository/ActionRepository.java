@@ -8,12 +8,13 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ActionRepository extends CrudRepository<Action, Long> {
-    @Query("select a from Action a where upper(a.name) like upper(:name) and upper(a.service) like upper(:service) and upper(a.environment) like upper(:env) and upper(a.channel.name) like upper(:channel)")
-    List<Action> findActionByParams(@Param("name") String name, @Param("service") String service, @Param("env") String environment, @Param("channel") String channelName);
 
     List<Action> findByProject_IdEquals(long id);
     List<Action> findByProject_IdEqualsAndEnvironmentLikeIgnoreCase(long id, String environment);
     List<Action> findByProject_IdEqualsAndEnvironmentLikeIgnoreCaseAndServiceLikeIgnoreCase(long id, String environment, String service);
+
+    @Query("select a from Action a where upper(a.name) = upper(?1) and upper(a.service) = upper(?2) and upper(a.environment) = upper(?3) and upper(a.project.slackChannel) = upper(?4)")
+    List<Action> findActionByParams(String name, String service, String environment, String slackChannel);
 
 
 }

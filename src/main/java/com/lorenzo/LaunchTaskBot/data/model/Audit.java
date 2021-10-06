@@ -10,19 +10,19 @@ public class Audit {
     private long id;
 
     @Column
-    private String actionValue;
+    private String user;
 
     @Column
-    private String status;
+    private String action;
 
-    @ManyToOne
-    private User user;
+    @Column
+    private String project;
 
-    @ManyToOne
-    private Channel channel;
+    @Column
+    private String environment;
 
-    @ManyToOne
-    private Action action;
+    @Column
+    private String state;
 
     public long getId() {
         return id;
@@ -32,43 +32,43 @@ public class Audit {
         this.id = id;
     }
 
-    public String getActionValue() {
-        return actionValue;
-    }
-
-    public void setActionValue(String actionValue) {
-        this.actionValue = actionValue;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public User getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(String user) {
         this.user = user;
     }
 
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-    }
-
-    public Action getAction() {
+    public String getAction() {
         return action;
     }
 
-    public void setAction(Action action) {
+    public void setAction(String action) {
         this.action = action;
+    }
+
+    public String getProject() {
+        return project;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
+    }
+
+    public String getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

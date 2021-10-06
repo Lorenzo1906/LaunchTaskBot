@@ -1,12 +1,15 @@
 package com.lorenzo.LaunchTaskBot.permissions;
 
-import com.lorenzo.LaunchTaskBot.data.model.Role;
-import com.lorenzo.LaunchTaskBot.data.repository.RoleRepository;
+import com.lorenzo.LaunchTaskBot.command.Command;
+import com.lorenzo.LaunchTaskBot.data.model.*;
+import com.lorenzo.LaunchTaskBot.data.repository.*;
+import kotlin.collections.ArrayDeque;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -14,24 +17,51 @@ public class Permissions {
     private static final Logger LOGGER = LoggerFactory.getLogger(Permissions.class);
 
     @Autowired
-    RoleRepository roleRepository;
+    UserRepository userRepository;
 
-    public boolean userHavePermissions(String username, String channelName){
+    @Autowired
+    ProjectRepository projectRepository;
+
+    @Autowired
+    RoleProjectActionRepository roleProjectActionRepository;
+
+    @Autowired
+    ActionRepository actionRepository;
+
+    public boolean userHavePermissionsToChannel(String username, String channelName){
         LOGGER.info("Checking permissions for {} in the channel {}", username, channelName);
 
-        List<Role> userRoles = roleRepository.findByUsers_UsernameLike(username);
+        User user = userRepository.findOneByUsername(username);
+        Project project = projectRepository.findBySlackChannelIgnoreCase(channelName);
 
-        for (Role role : userRoles) {
-            String currentChannelName = role.getChannel().getName();
+        List<RoleProjectAction> roleActions = new ArrayList<>();
 
-            if (currentChannelName.equalsIgnoreCase("all") || currentChannelName.equalsIgnoreCase(channelName)) {
-                LOGGER.debug("Permissions found  for {} in the channel {}", username, channelName);
+        for (Role role : user.getRoles()) {
+            roleActions.addAll(roleProjectActionRepository.findByRoleAndProject(role, project));
+        }
 
-                return true;
-            }
+        if (roleActions.size() > 0) {
+            LOGGER.debug("Permissions found  for {} in the channel {}", username, channelName);
+
+            return true;
         }
 
         LOGGER.debug("Permissions not found  for {} in the channel {}", username, channelName);
         return false;
+    }
+
+    public boolean userHavePermissionsToAction(Command command, String username){
+        Project project = projectRepository.findByNameIgnoreCase(command.getProject());
+        User user = userRepository.findOneByUsername(username);
+        List<Action> actions = actionRepository.findActionByParams(command.getAction(), command.getService(), command.getEnvironment(), command.getProject());
+
+        List<RoleProjectAction> projectActions = new ArrayList<>();
+        for (Role role : user.getRoles()) {
+            for (Action action : actions) {
+                projectActions.addAll(roleProjectActionRepository.findByRoleAndProjectAndAction(role, project, action));
+            }
+        }
+
+        return projectActions.size() > 0;
     }
 }

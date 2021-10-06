@@ -16,9 +16,6 @@ public class Role {
     @Column
     private String value;
 
-    @ManyToOne
-    private Channel channel;
-
     @ManyToMany
     private
     Set<User> users;
@@ -45,14 +42,6 @@ public class Role {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
     }
 
     public Set<User> getUsers() {

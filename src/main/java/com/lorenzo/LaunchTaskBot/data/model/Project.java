@@ -12,8 +12,8 @@ public class Project {
     @Column
     private String name;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private Channel channel;
+    @Column
+    private String slackChannel;
 
     public long getId() {
         return id;
@@ -29,5 +29,13 @@ public class Project {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSlackChannel() {
+        return slackChannel;
+    }
+
+    public void setSlackChannel(String slackChannel) {
+        this.slackChannel = slackChannel;
     }
 }
