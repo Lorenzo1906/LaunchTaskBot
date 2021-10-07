@@ -60,6 +60,7 @@ public class CommandActions {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Authorization ", "Bearer " + credentials);
 
                 if (conn.getResponseCode() != 200) {
                     LOGGER.error("Failed : HTTP error code : {}", conn.getResponseCode());
