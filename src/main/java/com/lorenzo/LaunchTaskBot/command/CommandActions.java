@@ -45,30 +45,39 @@ public class CommandActions {
             LOGGER.debug("Action found, executing action.");
         }
 
-        try {
-            Action action = actions.get(0);
+        String credentials = System.getenv("BAMBOO_CREDENTIALS");
+        if (credentials == null || credentials.isBlank()) {
+            LOGGER.error("Bamboo credentials not found");
 
-            URL url = new URL(action.getUrl());
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/json");
+            return false;
+        } else {
+            LOGGER.debug("Bamboo credentials found");
 
-            if (conn.getResponseCode() != 200) {
-                LOGGER.error("Failed : HTTP error code : {}", conn.getResponseCode());
-            } else {
-                BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+            try {
+                Action action = actions.get(0);
 
-                String output;
-                LOGGER.debug("Output from Server ....");
-                while ((output = br.readLine()) != null) {
+                URL url = new URL(action.getUrl());
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Accept", "application/json");
 
-                    System.out.println(output);
+                if (conn.getResponseCode() != 200) {
+                    LOGGER.error("Failed : HTTP error code : {}", conn.getResponseCode());
+                } else {
+                    BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+
+                    String output;
+                    LOGGER.debug("Output from Server ....");
+                    while ((output = br.readLine()) != null) {
+
+                        System.out.println(output);
+                    }
+
+                    conn.disconnect();
                 }
-
-                conn.disconnect();
+            } catch (IOException e) {
+                LOGGER.error(e.getLocalizedMessage(), e);
             }
-        } catch (IOException e) {
-            LOGGER.error(e.getLocalizedMessage(), e);
         }
 
         return true;

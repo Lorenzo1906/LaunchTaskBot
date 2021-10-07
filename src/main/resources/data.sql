@@ -11,8 +11,7 @@ INSERT INTO project (id, name, slack_channel) VALUES
   (1, 'general', 'general');
 
 INSERT INTO action (id, environment, name, service, url, project_id) VALUES
-  (1, 'qa', 'show', 'print', 'https://gorest.co.in/public/v1/users', 1);
+  (1, 'qa', 'show', 'print', 'https://ci.rivetlogic.com/rest/api/latest/queue/TP-LOR', 1);
 
 INSERT INTO role_project_action (id, role_id, project_id, action_id) VALUES
   (1, 1, 1, 1);
-
