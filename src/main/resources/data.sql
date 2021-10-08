@@ -16,4 +16,3 @@ INSERT INTO action (id, environment, name, service, url, project_id) VALUES
 INSERT INTO role_project_action (id, role_id, project_id, action_id) VALUES
   (1, 1, 1, 1);
 
-/*http://proty2.rivetlogic.com:3001/slack/events*/
