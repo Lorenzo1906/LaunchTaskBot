@@ -37,7 +37,7 @@ public class SlackApp {
     public App initSlackApp() {
         App app = new App();
 
-        app.command("/action", (req, ctx) -> {
+        app.command("/launchbot", (req, ctx) -> {
             LOGGER.info("Received command in the channel {}", req.getPayload().getChannelName());
 
             if (permissions.userHavePermissionsToChannel(req.getPayload().getUserName(), req.getPayload().getChannelName())) {
