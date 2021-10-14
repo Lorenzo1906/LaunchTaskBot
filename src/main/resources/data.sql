@@ -1,5 +1,5 @@
 INSERT INTO user (id, username) VALUES
-  (1, 'lorenzo1906');
+  (1, 'lorenzo.rodriguez');
 
 INSERT INTO role (id, name, value) VALUES
   (1, 'admin', 'value');
