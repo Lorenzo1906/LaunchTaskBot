@@ -32,12 +32,15 @@ public class Permissions {
         LOGGER.info("Checking permissions for {} in the channel {}", username, channelName);
 
         User user = userRepository.findOneByUsername(username);
+        System.out.println(user.getId() + user.getUsername());
         Project project = projectRepository.findBySlackChannelIgnoreCase(channelName);
+        System.out.println(project.getId() + project.getSlackChannel());
 
         List<RoleProjectAction> roleActions = new ArrayList<>();
 
         for (Role role : user.getRoles()) {
             roleActions.addAll(roleProjectActionRepository.findByRoleAndProject(role, project));
+            System.out.println(role.getName());
         }
 
         if (roleActions.size() > 0) {
