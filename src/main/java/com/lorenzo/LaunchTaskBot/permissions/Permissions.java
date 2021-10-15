@@ -50,13 +50,10 @@ public class Permissions {
     }
 
     public boolean userHavePermissionsToAction(Command command, String username, String slackChannel){
-        System.out.println(slackChannel);
-
         Project project = projectRepository.findBySlackChannelIgnoreCase(slackChannel);
 
-
         User user = userRepository.findOneByUsername(username);
-        List<Action> actions = actionRepository.findActionByParams(command.getAction(), command.getService(), command.getEnvironment(), command.getProject());
+        List<Action> actions = actionRepository.findActionByParams(command.getAction(), command.getService(), command.getEnvironment(), slackChannel);
 
         List<RoleProjectAction> projectActions = new ArrayList<>();
         for (Role role : user.getRoles()) {
