@@ -8,7 +8,7 @@ INSERT INTO role_users (roles_id, users_id) VALUES
   (1, 1);
 
 INSERT INTO project (id, name, slack_channel) VALUES
-  (1, 'testbed', 'testbed');
+  (1, 'TEST_CHANNEL', 'testbed');
 
 INSERT INTO action (id, environment, name, service, url, project_id) VALUES
   (1, 'qa', 'show', 'print', 'https://ci.rivetlogic.com/rest/api/latest/queue/TP-LOR', 1);

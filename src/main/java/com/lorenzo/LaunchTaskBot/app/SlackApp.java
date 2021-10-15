@@ -99,7 +99,7 @@ public class SlackApp {
             Command command = commandParser.parse(value.split(" "));
             command = commandActions.getCommandInfo(command, req.getPayload().getChannel().getName());
 
-            if (permissions.userHavePermissionsToAction(command, req.getPayload().getUser().getUsername())) {
+            if (permissions.userHavePermissionsToAction(command, req.getPayload().getUser().getUsername(), req.getPayload().getChannel().getName())) {
                 if (req.getPayload().getResponseUrl() != null) {
                     LOGGER.debug("Generating channel notification {}", req.getPayload().getChannel().getName());
 
