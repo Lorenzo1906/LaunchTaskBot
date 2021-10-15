@@ -121,7 +121,7 @@ public class SlackApp {
                     );
 
                     LOGGER.debug("Start action execution");
-                    boolean result = commandActions.executeCommand(command);
+                    boolean result = commandActions.executeCommand(command, req.getPayload().getChannel().getName());
 
                     if (result) {
                         LOGGER.debug("Action executed correctly, generating answer");

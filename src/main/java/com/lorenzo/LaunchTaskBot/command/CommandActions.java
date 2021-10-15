@@ -43,9 +43,9 @@ public class CommandActions {
     private static final int EIGHT_HOURS = 480 * 60 * 1000;
     private static final int THIRTY_SECONDS = 30 * 1000;
 
-    public boolean executeCommand(Command command) {
+    public boolean executeCommand(Command command, String channelName) {
         boolean result = true;
-        List<Action> actions = actionRepository.findActionByParams(command.getAction(), command.getService(), command.getEnvironment(), command.getProject());
+        List<Action> actions = actionRepository.findActionByParams(command.getAction(), command.getService(), command.getEnvironment(), channelName);
 
         if (actions.size() > 1) {
             LOGGER.error("More than one action returned for current configuration");
