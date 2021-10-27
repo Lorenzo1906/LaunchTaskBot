@@ -7,13 +7,13 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:file:./database.data
     driverClassName: org.h2.Driver
     username: sa
     password:
   jpa:
     show-sql: true
-    defer-datasource-initialization: true
+    generate-ddl: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
@@ -37,13 +37,13 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:file:./database.data
     driverClassName: org.h2.Driver
     username: sa
     password:
   jpa:
     show-sql: false
-    defer-datasource-initialization: true
+    generate-ddl: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
