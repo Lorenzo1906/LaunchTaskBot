@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -127,6 +128,7 @@ public class CommandActions {
         audit.setProject(project);
         audit.setEnvironment(environment);
         audit.setState(state);
+        audit.setCreated(new Date());
 
         return audit;
     }

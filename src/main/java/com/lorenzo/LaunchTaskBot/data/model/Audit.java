@@ -1,6 +1,7 @@
 package com.lorenzo.LaunchTaskBot.data.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table
@@ -23,6 +24,9 @@ public class Audit {
 
     @Column
     private String state;
+
+    @Column
+    private Date created;
 
     public long getId() {
         return id;
@@ -70,5 +74,13 @@ public class Audit {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
     }
 }
