@@ -1,8 +1,10 @@
 package com.lorenzo.LaunchTaskBot.command;
 
 import com.lorenzo.LaunchTaskBot.data.model.Action;
+import com.lorenzo.LaunchTaskBot.data.model.Audit;
 import com.lorenzo.LaunchTaskBot.data.model.Project;
 import com.lorenzo.LaunchTaskBot.data.repository.ActionRepository;
+import com.lorenzo.LaunchTaskBot.data.repository.AuditRepository;
 import com.lorenzo.LaunchTaskBot.data.repository.ProjectRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,22 +40,29 @@ public class CommandActions {
     private ActionRepository actionRepository;
 
     @Autowired
+    private AuditRepository auditRepository;
+
+    @Autowired
     private ProjectRepository projectRepository;
 
     private static final int EIGHT_HOURS = 480 * 60 * 1000;
     private static final int THIRTY_SECONDS = 30 * 1000;
 
-    public boolean executeCommand(Command command, String channelName) {
+    public boolean executeCommand(Command command, String channelName, String user) {
         boolean result = true;
         List<Action> actions = actionRepository.findActionByParams(command.getAction(), command.getService(), command.getEnvironment(), channelName);
+        Audit audit;
 
         if (actions.size() > 1) {
             LOGGER.error("More than one action returned for current configuration");
 
+
+            audit = generateAudit(user, command.getAction(), command.getProject(), command.getEnvironment(), "More than one action returned for current configuration");
             result = false;
         } else if (actions.size() < 1) {
             LOGGER.error("No action returned for current configuration");
 
+            audit = generateAudit(user, command.getAction(), command.getProject(), command.getEnvironment(), "No action returned for current configuration");
             result = false;
         } else {
             LOGGER.debug("Action found, executing action.");
@@ -62,6 +71,7 @@ public class CommandActions {
             if (credentials == null || credentials.isBlank()) {
                 LOGGER.error("Bamboo credentials not found");
 
+                audit = generateAudit(user, command.getAction(), command.getProject(), command.getEnvironment(), "Bamboo credentials not found");
                 result = false;
             } else {
                 LOGGER.debug("Bamboo credentials found");
@@ -79,6 +89,7 @@ public class CommandActions {
                     if (conn.getResponseCode() != 200) {
                         LOGGER.error("Failed : HTTP error code : {}", conn.getResponseCode());
 
+                        audit = generateAudit(user, command.getAction(), command.getProject(), command.getEnvironment(), "Failed : HTTP error code : " + conn.getResponseCode());
                         result = false;
                     } else {
                         String resultUrl = "";
@@ -94,14 +105,30 @@ public class CommandActions {
                         conn.disconnect();
 
                         result = getPlanResult(resultUrl, credentials);
+                        audit = generateAudit(user, command.getAction(), command.getProject(), command.getEnvironment(), String.valueOf(result));
                     }
                 } catch (IOException e) {
+                    audit = generateAudit(user, command.getAction(), command.getProject(), command.getEnvironment(), e.getLocalizedMessage());
                     LOGGER.error(e.getLocalizedMessage(), e);
                 }
             }
         }
 
+        auditRepository.save(audit);
+
         return result;
+    }
+
+    private Audit generateAudit(String user, String action, String project, String environment, String state) {
+        Audit audit = new Audit();
+
+        audit.setUser(user);
+        audit.setAction(action);
+        audit.setProject(project);
+        audit.setEnvironment(environment);
+        audit.setState(state);
+
+        return audit;
     }
 
     /**

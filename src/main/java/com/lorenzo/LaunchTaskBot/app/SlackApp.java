@@ -121,21 +121,21 @@ public class SlackApp {
                     );
 
                     LOGGER.debug("Start action execution");
-                    boolean result = commandActions.executeCommand(command, req.getPayload().getChannel().getName());
+                    boolean result = commandActions.executeCommand(command, req.getPayload().getChannel().getName(), req.getPayload().getUser().getUsername());
 
                     if (result) {
                         LOGGER.debug("Action executed correctly, generating answer");
 
                         ctx.client().chatPostMessage(r -> r
                                 .channel(req.getPayload().getChannel().getName())
-                                .text(":white_check_mark: Execution successful")
+                                .text(":white_check_mark: Execution successful. Service: " + finalCommand.getService() + "; Environment: " + finalCommand.getEnvironment()+ ";  Action: " + finalCommand.getAction())
                         );
                     } else {
                         LOGGER.debug("Error while executing action, generating answer");
 
                         ctx.client().chatPostMessage(r -> r
                                 .channel(req.getPayload().getChannel().getName())
-                                .text(":x: Error executing action")
+                                .text(":x: Error executing action. Service: " + finalCommand.getService() + "; Environment: " + finalCommand.getEnvironment()+ ";  Action: " + finalCommand.getAction())
                         );
                     }
                 }
